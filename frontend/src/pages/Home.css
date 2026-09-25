@@ -47,6 +47,13 @@
   color: var(--color-text-muted);
 }
 
+.home__cta {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  flex-wrap: wrap;
+}
+
 /* Status card */
 .status-card {
   animation: fade-up 220ms ease-out both;
@@ -138,11 +145,6 @@
   border-radius: var(--radius-sm);
   background: var(--color-bg);
   font-size: 0.8125rem;
-}
-
-.home__note {
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
 }
 
 @keyframes fade-up {

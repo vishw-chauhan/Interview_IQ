@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Button from '../components/Button.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 import { getHealth } from '../services/health.service.js';
 import { getErrorMessage } from '../utils/getErrorMessage.js';
 import './Home.css';
@@ -18,7 +20,9 @@ function getDatabaseState(status, health) {
 }
 
 export default function Home() {
-  const [status, setStatus] = useState('loading'); // 'loading' | 'ready' | 'error'
+  const { isAuthenticated, isInitializing } = useAuth();
+
+  const [status, setStatus] = useState('loading');
   const [health, setHealth] = useState(null);
   const [checkedAt, setCheckedAt] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -55,7 +59,9 @@ export default function Home() {
     <div className="page">
       <main className="home">
         <div className="home__brand">
-          <span className="home__logo" aria-hidden="true">IQ</span>
+          <span className="home__logo" aria-hidden="true">
+            IQ
+          </span>
           <span className="home__name">InterviewIQ</span>
         </div>
 
@@ -65,6 +71,25 @@ export default function Home() {
           <p className="home__lead">
             Practice with questions built from your resume and target role, then get feedback on every answer.
           </p>
+
+          {!isInitializing && (
+            <div className="home__cta">
+              {isAuthenticated ? (
+                <Link to="/dashboard">
+                  <Button>Go to dashboard</Button>
+                </Link>
+              ) : (
+                <>
+                  <Link to="/signup">
+                    <Button>Create account</Button>
+                  </Link>
+                  <Link to="/login">
+                    <Button variant="secondary">Log in</Button>
+                  </Link>
+                </>
+              )}
+            </div>
+          )}
         </section>
 
         <section className="card status-card" aria-labelledby="status-title">
@@ -109,12 +134,8 @@ export default function Home() {
             </p>
           )}
 
-          {status === 'ready' && !databaseDown && (
-            <p className="status-message">Last checked at {checkedAt}</p>
-          )}
+          {status === 'ready' && !databaseDown && <p className="status-message">Last checked at {checkedAt}</p>}
         </section>
-
-        <p className="home__note">Sign up and login are coming in Phase 2.</p>
       </main>
     </div>
   );
