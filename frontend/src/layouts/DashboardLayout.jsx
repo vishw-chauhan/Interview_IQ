@@ -17,7 +17,7 @@ import './DashboardLayout.css';
 
 const navItems = [
   { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard, available: true },
-  { label: 'Resume Analysis', icon: FileText, available: false, phase: 'Phase 5' },
+  { label: 'Resume Analysis', to: '/resumes', icon: FileText, available: true },
   { label: 'AI Interview', icon: Video, available: false, phase: 'Phase 9' },
   { label: 'Performance Report', icon: BarChart3, available: false, phase: 'Phase 15' },
   { label: 'Skill Analysis', icon: Target, available: false, phase: 'Phase 17' },
@@ -38,7 +38,6 @@ export default function DashboardLayout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
-  // Close the user menu when clicking outside it
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -49,7 +48,6 @@ export default function DashboardLayout() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Close the mobile sidebar whenever the route changes (a nav link was clicked)
   const closeSidebar = () => setIsSidebarOpen(false);
 
   return (
