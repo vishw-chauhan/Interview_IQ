@@ -1,12 +1,11 @@
-.dashboard-placeholder {
-  width: 100%;
-  max-width: 640px;
+.dashboard {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
+  max-width: 1080px;
 }
 
-.dashboard-placeholder__header {
+.dashboard__welcome {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -14,18 +13,104 @@
   flex-wrap: wrap;
 }
 
-.dashboard-placeholder__header h1 {
-  font-size: 1.375rem;
+.dashboard__welcome h1 {
+  font-size: 1.5rem;
 }
 
-.dashboard-placeholder__header p {
+.dashboard__tagline {
   margin-top: var(--space-1);
   color: var(--color-primary);
   font-weight: 600;
+  font-size: 0.9375rem;
 }
 
-.dashboard-placeholder__note {
-  margin-top: var(--space-3);
+.dashboard__role-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  border-radius: 999px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.dashboard__role-pill--muted {
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+}
+
+.dashboard__cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.dashboard__cta h2 {
+  font-size: 1.0625rem;
+}
+
+.dashboard__cta p {
+  margin-top: var(--space-1);
   color: var(--color-text-muted);
   font-size: 0.875rem;
+}
+
+.dashboard__section-title {
+  font-size: 1.0625rem;
+  margin-bottom: var(--space-4);
+}
+
+.dashboard__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.feature-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.feature-card__icon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.feature-card h3 {
+  font-size: 1rem;
+}
+
+.feature-card p {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  flex: 1;
+}
+
+.feature-card__footer {
+  margin-top: var(--space-2);
+}
+
+.feature-card__badge {
+  display: inline-block;
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
 }
