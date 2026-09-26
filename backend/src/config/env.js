@@ -6,7 +6,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env'), quiet: true });
 
-const required = ['DB_NAME', 'DB_USER', 'DB_PASSWORD', 'JWT_SECRET', 'GEMINI_API_KEY'];
+const required = ['DB_NAME', 'DB_USER', 'DB_PASSWORD', 'JWT_SECRET', 'GEMINI_API_KEY', 'DEEPGRAM_API_KEY'];
 const missing = required.filter((key) => !process.env[key]);
 
 if (missing.length > 0) {
@@ -33,6 +33,9 @@ export const env = {
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   gemini: {
     apiKey: process.env.GEMINI_API_KEY,
-    model: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+    model: process.env.GEMINI_MODEL || 'gemini-flash-latest',
+  },
+  deepgram: {
+    apiKey: process.env.DEEPGRAM_API_KEY,
   },
 };

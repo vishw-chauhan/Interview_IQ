@@ -7,6 +7,7 @@ import Resumes from './pages/Resumes.jsx';
 import ResumeDetail from './pages/ResumeDetail.jsx';
 import NewInterview from './pages/NewInterview.jsx';
 import InterviewDetail from './pages/InterviewDetail.jsx';
+import InterviewSession from './pages/InterviewSession.jsx';
 import NotFound from './pages/NotFound.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import DashboardLayout from './layouts/DashboardLayout.jsx';
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/resumes/:id" element={<ResumeDetail />} />
         <Route path="/interviews/new" element={<NewInterview />} />
         <Route path="/interviews/:id" element={<InterviewDetail />} />
+        <Route path="/interviews/:id/session" element={<InterviewSession />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />

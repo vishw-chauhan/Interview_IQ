@@ -19,3 +19,34 @@ export async function generateQuestions(id) {
   const response = await api.post(`/interviews/${id}/questions`, {}, { timeout: 60000 });
   return response.data.data;
 }
+
+export async function fetchSession(id) {
+  const response = await api.get(`/interviews/${id}/session`);
+  return response.data.data;
+}
+
+export async function startInterviewSession(id) {
+  const response = await api.post(`/interviews/${id}/start`, {});
+  return response.data.data;
+}
+
+export async function submitAnswer(id, { questionId, answerText, durationSeconds, transcript }) {
+  const response = await api.post(`/interviews/${id}/answers`, {
+    questionId,
+    answerText,
+    durationSeconds,
+    transcript,
+  });
+  return response.data.data;
+}
+
+export async function transcribeAudio(id, audioBlob) {
+  const formData = new FormData();
+  formData.append('audio', audioBlob, 'answer.webm');
+
+  const response = await api.post(`/interviews/${id}/transcribe`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 30000,
+  });
+  return response.data.data;
+}

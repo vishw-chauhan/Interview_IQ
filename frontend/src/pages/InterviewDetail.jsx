@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Video, FileText, Gauge, Clock, Sparkles, ListChecks } from 'lucide-react';
+import { ArrowLeft, Video, FileText, Gauge, Clock, Sparkles, ListChecks, PlayCircle } from 'lucide-react';
 import Button from '../components/Button.jsx';
 import Skeleton from '../components/Skeleton.jsx';
 import EmptyState from '../components/EmptyState.jsx';
@@ -20,6 +20,12 @@ const CATEGORY_LABELS = {
   behavioral: 'Behavioral',
   role_specific: 'Role-specific',
   problem_solving: 'Problem solving',
+};
+
+const STATUS_LABELS = {
+  created: { text: 'Not started', tone: 'neutral' },
+  in_progress: { text: 'In progress', tone: 'pending' },
+  completed: { text: 'Completed', tone: 'ok' },
 };
 
 function QuestionItem({ question, index }) {
@@ -118,6 +124,8 @@ export default function InterviewDetail() {
 
   const questions = interview.questions || [];
   const hasQuestions = questions.length > 0;
+  const canGenerate = interview.status === 'created';
+  const sessionStatus = STATUS_LABELS[interview.status] || STATUS_LABELS.created;
 
   return (
     <div className="interview-detail">
@@ -135,6 +143,9 @@ export default function InterviewDetail() {
             Created {new Date(interview.createdAt).toLocaleDateString()}
           </p>
         </div>
+        <span className={`interview-detail__status interview-detail__status--${sessionStatus.tone}`}>
+          {sessionStatus.text}
+        </span>
       </div>
 
       <div className="card interview-detail__config">
@@ -161,6 +172,27 @@ export default function InterviewDetail() {
         </div>
       </div>
 
+      {hasQuestions && (
+        <div className="card interview-detail__session-cta">
+          <div>
+            <h2>Interview session</h2>
+            <p>
+              {interview.status === 'created' && `${questions.length} questions ready. Start when you're ready.`}
+              {interview.status === 'in_progress' && 'This session is in progress.'}
+              {interview.status === 'completed' && 'This session is complete.'}
+            </p>
+          </div>
+          <Link to={`/interviews/${id}/session`}>
+            <Button>
+              <PlayCircle size={16} aria-hidden="true" />
+              {interview.status === 'created' && 'Start interview'}
+              {interview.status === 'in_progress' && 'Resume session'}
+              {interview.status === 'completed' && 'View summary'}
+            </Button>
+          </Link>
+        </div>
+      )}
+
       <div className="card interview-detail__questions-cta">
         <div>
           <h2>Interview questions</h2>
@@ -170,10 +202,14 @@ export default function InterviewDetail() {
               : 'Generate personalized questions based on your role, difficulty and resume.'}
           </p>
         </div>
-        <Button onClick={handleGenerate} loading={isGenerating}>
-          <Sparkles size={16} aria-hidden="true" />
-          {hasQuestions ? 'Regenerate questions' : 'Generate questions'}
-        </Button>
+        {canGenerate ? (
+          <Button onClick={handleGenerate} loading={isGenerating}>
+            <Sparkles size={16} aria-hidden="true" />
+            {hasQuestions ? 'Regenerate questions' : 'Generate questions'}
+          </Button>
+        ) : (
+          <span className="interview-detail__locked-hint">Locked — session already started</span>
+        )}
       </div>
 
       {generateError && (
@@ -199,17 +235,6 @@ export default function InterviewDetail() {
               <QuestionItem key={question.id} question={question} index={index} />
             ))}
           </div>
-        </div>
-      )}
-
-      {hasQuestions && (
-        <div className="card interview-detail__coming-soon">
-          <Video size={28} aria-hidden="true" />
-          <h2>Interview session</h2>
-          <p>
-            The live, question-by-question interview session is coming in Phase 9. Your questions
-            above are saved and ready.
-          </p>
         </div>
       )}
     </div>
