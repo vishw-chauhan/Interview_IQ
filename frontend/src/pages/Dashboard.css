@@ -114,3 +114,19 @@
   font-size: 0.75rem;
   font-weight: 600;
 }
+
+
+.feature-card__link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.feature-card--available:hover {
+  border-color: var(--color-primary);
+}
+
+.feature-card__badge--available {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}

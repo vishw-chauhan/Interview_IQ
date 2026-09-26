@@ -175,3 +175,8 @@
     justify-content: flex-end;
   }
 }
+
+.resume-card__score {
+  color: var(--color-primary);
+  font-weight: 600;
+}

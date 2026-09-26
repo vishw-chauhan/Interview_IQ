@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { FileText, Video, BarChart3, MessageSquareText, Target, History, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import Button from '../components/Button.jsx';
@@ -8,13 +9,15 @@ const features = [
     title: 'Resume Analysis',
     description: 'Upload your resume and get AI-powered feedback for your target role.',
     icon: FileText,
-    phase: 'Phase 5',
+    to: '/resumes',
+    available: true,
   },
   {
     title: 'AI Interview',
-    description: 'Practice a personalized interview based on your resume and role.',
+    description: 'Configure and practice an interview based on your resume and role.',
     icon: Video,
-    phase: 'Phase 9',
+    to: '/interviews/new',
+    available: true,
   },
   {
     title: 'Performance Report',
@@ -70,10 +73,12 @@ export default function Dashboard() {
           <h2>Start a new interview</h2>
           <p>Practice with questions generated from your resume and target role.</p>
         </div>
-        <Button disabled title="Coming in Phase 9">
-          <Sparkles size={16} aria-hidden="true" />
-          Start New Interview
-        </Button>
+        <Link to="/interviews/new">
+          <Button>
+            <Sparkles size={16} aria-hidden="true" />
+            Start New Interview
+          </Button>
+        </Link>
       </section>
 
       <section aria-labelledby="features-title">
@@ -84,17 +89,29 @@ export default function Dashboard() {
         <div className="dashboard__grid">
           {features.map((feature) => {
             const Icon = feature.icon;
-            return (
-              <div key={feature.title} className="card feature-card">
+            const card = (
+              <div className={`card feature-card ${feature.available ? 'feature-card--available' : ''}`}>
                 <div className="feature-card__icon">
                   <Icon size={20} aria-hidden="true" />
                 </div>
                 <h3>{feature.title}</h3>
                 <p>{feature.description}</p>
                 <div className="feature-card__footer">
-                  <span className="feature-card__badge">Coming in {feature.phase}</span>
+                  {feature.available ? (
+                    <span className="feature-card__badge feature-card__badge--available">Available</span>
+                  ) : (
+                    <span className="feature-card__badge">Coming in {feature.phase}</span>
+                  )}
                 </div>
               </div>
+            );
+
+            return feature.available ? (
+              <Link key={feature.title} to={feature.to} className="feature-card__link">
+                {card}
+              </Link>
+            ) : (
+              <div key={feature.title}>{card}</div>
             );
           })}
         </div>

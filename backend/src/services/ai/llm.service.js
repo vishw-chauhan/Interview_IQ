@@ -10,19 +10,27 @@ function stripCodeFences(text) {
   return fenceMatch ? fenceMatch[1] : trimmed;
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function isRetryableError(error) {
+  const message = error.message || '';
+  return message.includes('503') || message.includes('UNAVAILABLE') || message.includes('429');
+}
+
 /**
- * Sends a prompt expecting a single JSON object back. Retries once on
- * malformed JSON or a schema validation failure, since LLM output is
- * occasionally imperfect. Throws AppError(502) if both attempts fail —
- * callers must never fabricate a fallback result.
- *
- * Same interface as the previous Claude-based version, so callers
- * (resumeAnalysis.service.js and later phases) need no changes.
+ * Sends a prompt expecting a single JSON object back. Retries up to 4 times
+ * total, with an increasing delay, since a 503 "model overloaded" response
+ * is usually resolved within seconds to a couple of minutes. Throws
+ * AppError(502) if all attempts fail — callers must never fabricate a
+ * fallback result.
  */
 export async function completeJson({ systemPrompt, userPrompt, schema, maxTokens = 2000 }) {
+  const MAX_ATTEMPTS = 4;
   let lastError;
 
-  for (let attempt = 1; attempt <= 2; attempt += 1) {
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
     try {
       const response = await client.models.generateContent({
         model: env.gemini.model,
@@ -46,11 +54,19 @@ export async function completeJson({ systemPrompt, userPrompt, schema, maxTokens
     } catch (error) {
       lastError = error;
       console.error(`AI call attempt ${attempt} failed:`, error.message);
+
+      if (attempt < MAX_ATTEMPTS && isRetryableError(error)) {
+        const delayMs = attempt * 3000; // 3s, 6s, 9s
+        console.error(`Retrying in ${delayMs / 1000}s...`);
+        await sleep(delayMs);
+      } else if (!isRetryableError(error)) {
+        break; // non-retryable (e.g. bad JSON, validation) — stop early
+      }
     }
   }
 
   throw new AppError(
-    'The AI service could not process this request right now. Please try again in a moment.',
+    'The AI service is experiencing high demand right now. Please try again in a minute.',
     502
   );
 }

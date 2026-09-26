@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FileText, UploadCloud, Trash2, Sparkles } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { FileText, UploadCloud, Trash2, Sparkles, CheckCircle2 } from 'lucide-react';
 import Button from '../components/Button.jsx';
 import Skeleton from '../components/Skeleton.jsx';
 import EmptyState from '../components/EmptyState.jsx';
@@ -40,14 +41,31 @@ function ResumeCard({ resume, onDelete, isDeleting }) {
         <p className="resume-card__meta">
           {resume.targetRoleName || 'No target role'} · {formatBytes(resume.fileSize)} ·{' '}
           {new Date(resume.createdAt).toLocaleDateString()}
+          {resume.hasAnalysis && resume.overallScore != null && (
+            <>
+              {' '}
+              · <span className="resume-card__score">Score: {resume.overallScore}</span>
+            </>
+          )}
         </p>
       </div>
 
       <div className="resume-card__actions">
-        <Button variant="secondary" disabled title="Coming in Phase 5">
-          <Sparkles size={15} aria-hidden="true" />
-          Analyze
-        </Button>
+        <Link to={`/resumes/${resume.id}`}>
+          <Button variant="secondary">
+            {resume.hasAnalysis ? (
+              <>
+                <CheckCircle2 size={15} aria-hidden="true" />
+                View analysis
+              </>
+            ) : (
+              <>
+                <Sparkles size={15} aria-hidden="true" />
+                Analyze
+              </>
+            )}
+          </Button>
+        </Link>
 
         {confirming ? (
           <div className="resume-card__confirm">
@@ -87,7 +105,7 @@ export default function Resumes() {
   const [isDragActive, setIsDragActive] = useState(false);
 
   const [resumes, setResumes] = useState([]);
-  const [listStatus, setListStatus] = useState('loading'); // loading | ready | error
+  const [listStatus, setListStatus] = useState('loading');
   const [listError, setListError] = useState('');
   const [deletingId, setDeletingId] = useState(null);
 
@@ -97,9 +115,7 @@ export default function Resumes() {
     }
     fetchRoles()
       .then(setRoles)
-      .catch(() => {
-        /* role dropdown just stays empty; upload can still proceed without a role */
-      });
+      .catch(() => {});
   }, [user]);
 
   const loadResumes = useCallback(async () => {
