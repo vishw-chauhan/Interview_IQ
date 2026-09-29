@@ -32,9 +32,9 @@ export default function MediaPanel({ media, onTranscribe, onTranscribed }) {
     setTranscribeStatus('loading');
     setTranscribeError('');
     try {
-      const { transcript, confidence } = await onTranscribe(audioBlob);
+      const { transcript, confidence, words } = await onTranscribe(audioBlob);
       setTranscribeStatus('idle');
-      onTranscribed(transcript, confidence);
+      onTranscribed(transcript, confidence, words);
     } catch (error) {
       setTranscribeStatus('error');
       const message =
@@ -80,7 +80,6 @@ export default function MediaPanel({ media, onTranscribe, onTranscribed }) {
     );
   }
 
-  // granted
   return (
     <div className="media-panel">
       <div className="media-panel__preview">

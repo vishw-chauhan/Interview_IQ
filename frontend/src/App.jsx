@@ -10,6 +10,7 @@ import InterviewDetail from './pages/InterviewDetail.jsx';
 import InterviewSession from './pages/InterviewSession.jsx';
 import InterviewFeedback from './pages/InterviewFeedback.jsx';
 import InterviewReport from './pages/InterviewReport.jsx';
+import InterviewAnalytics from './pages/InterviewAnalytics.jsx';
 import NotFound from './pages/NotFound.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import DashboardLayout from './layouts/DashboardLayout.jsx';
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="/interviews/:id/session" element={<InterviewSession />} />
         <Route path="/interviews/:id/feedback" element={<InterviewFeedback />} />
         <Route path="/interviews/:id/report" element={<InterviewReport />} />
+        <Route path="/interviews/:id/analytics" element={<InterviewAnalytics />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />

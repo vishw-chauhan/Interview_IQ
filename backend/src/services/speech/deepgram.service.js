@@ -5,8 +5,9 @@ const DEEPGRAM_URL = 'https://api.deepgram.com/v1/listen?model=nova-2&smart_form
 
 /**
  * Sends an audio buffer to Deepgram's pre-recorded transcription API and
- * returns the transcript and confidence. Throws AppError(502) if the
- * service call itself fails — never fabricates a transcript.
+ * returns the transcript, confidence, and per-word timestamps. Throws
+ * AppError(502) if the service call itself fails — never fabricates a
+ * transcript or timing data.
  */
 export async function transcribeAudioBuffer(buffer, mimeType) {
   let response;
@@ -38,8 +39,17 @@ export async function transcribeAudioBuffer(buffer, mimeType) {
     throw new AppError('The speech-to-text service returned an unexpected response.', 502);
   }
 
+  const words = Array.isArray(alternative.words)
+    ? alternative.words.map((w) => ({
+        word: w.punctuated_word || w.word,
+        start: w.start,
+        end: w.end,
+      }))
+    : [];
+
   return {
     transcript: (alternative.transcript || '').trim(),
     confidence: typeof alternative.confidence === 'number' ? alternative.confidence : null,
+    words,
   };
 }

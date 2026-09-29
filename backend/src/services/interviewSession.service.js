@@ -58,6 +58,7 @@ export async function submitAnswerAndAdvance({
   feedback,
   betterAnswer,
   followUp,
+  speakingMetrics,
 }) {
   const client = await pool.connect();
   try {
@@ -66,8 +67,8 @@ export async function submitAnswerAndAdvance({
     await client.query(
       `INSERT INTO answers
          (question_id, interview_id, answer_text, duration_seconds, transcript,
-          technical_score, communication_score, feedback, better_answer)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+          technical_score, communication_score, feedback, better_answer, speaking_metrics)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
       [
         questionId,
         interviewId,
@@ -78,6 +79,7 @@ export async function submitAnswerAndAdvance({
         communicationScore ?? null,
         feedback ? JSON.stringify(feedback) : null,
         betterAnswer || null,
+        speakingMetrics ? JSON.stringify(speakingMetrics) : null,
       ]
     );
 
@@ -138,12 +140,6 @@ export async function submitAnswerAndAdvance({
   }
 }
 
-/**
- * Returns every question for the interview, each paired with its answer and
- * evaluation via LEFT JOIN — a question with no submitted answer yet comes
- * back with all answer-side fields as null, which the caller renders as
- * "Not answered yet" rather than treating as missing/broken data.
- */
 export async function getFeedbackItems(interviewId) {
   const result = await query(
     `SELECT

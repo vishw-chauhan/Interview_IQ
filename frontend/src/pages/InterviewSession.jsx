@@ -71,6 +71,7 @@ export default function InterviewSession() {
 
   const [lastTranscript, setLastTranscript] = useState('');
   const [transcriptConfidence, setTranscriptConfidence] = useState(null);
+  const [lastSpeechWords, setLastSpeechWords] = useState(null);
 
   const [reviewState, setReviewState] = useState(null);
 
@@ -103,6 +104,7 @@ export default function InterviewSession() {
       setAnswerText('');
       setLastTranscript('');
       setTranscriptConfidence(null);
+      setLastSpeechWords(null);
       media.resetRecording();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -130,10 +132,11 @@ export default function InterviewSession() {
 
   const handleTranscribe = useCallback((audioBlob) => transcribeAudio(id, audioBlob), [id]);
 
-  function handleTranscribed(transcript, confidence) {
+  function handleTranscribed(transcript, confidence, words) {
     setAnswerText(transcript);
     setLastTranscript(transcript);
     setTranscriptConfidence(confidence);
+    setLastSpeechWords(words || null);
   }
 
   async function handleSubmit(event) {
@@ -146,7 +149,9 @@ export default function InterviewSession() {
     }
 
     const durationSeconds = Math.round((Date.now() - questionStartRef.current) / 1000);
-    const transcriptToSend = answerText.trim() === lastTranscript.trim() ? lastTranscript : undefined;
+    const unedited = answerText.trim() === lastTranscript.trim();
+    const transcriptToSend = unedited ? lastTranscript : undefined;
+    const speechWordsToSend = unedited ? lastSpeechWords || undefined : undefined;
 
     setIsSubmitting(true);
     try {
@@ -155,6 +160,7 @@ export default function InterviewSession() {
         answerText: answerText.trim(),
         durationSeconds,
         transcript: transcriptToSend,
+        speechWords: speechWordsToSend,
       });
       const { lastEvaluation, evaluationError, followUpAdded, followUpReason, ...nextSession } = updated;
       setReviewState({ evaluation: lastEvaluation, evaluationError, followUpAdded, followUpReason, nextSession });
@@ -373,7 +379,8 @@ export default function InterviewSession() {
             {formatDuration(session.durationSeconds)}.
           </p>
           <p className="interview-session__hint">
-            A full breakdown of every answer is coming in Phase 14, and an aggregate performance report in Phase 15.
+            A full breakdown of every answer, an aggregate report, and speaking analytics are all available from the
+            interview details page.
           </p>
           <Link to={`/interviews/${id}`}>
             <Button variant="secondary">Back to interview details</Button>

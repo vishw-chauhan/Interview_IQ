@@ -1,0 +1,121 @@
+.interview-analytics {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 780px;
+}
+
+.interview-analytics h1 {
+  font-size: 1.375rem;
+}
+
+.interview-analytics__subtitle {
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  text-transform: capitalize;
+}
+
+.interview-analytics__coverage {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.interview-analytics__section-title {
+  font-size: 1rem;
+  margin-bottom: var(--space-3);
+}
+
+.analytics-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-4);
+}
+
+.analytics-stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-primary);
+}
+
+.analytics-stat__value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.analytics-stat__label {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.filler-breakdown {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.filler-breakdown__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: 999px;
+  background: var(--color-bg);
+  font-size: 0.8125rem;
+}
+
+.filler-breakdown__word {
+  font-weight: 600;
+}
+
+.filler-breakdown__count {
+  color: var(--color-text-muted);
+}
+
+.analytics-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.analytics-table__row {
+  display: grid;
+  grid-template-columns: 28px 120px 90px 1fr;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.8125rem;
+}
+
+.analytics-table__row:last-child {
+  border-bottom: none;
+}
+
+.analytics-table__index {
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.analytics-table__category {
+  color: var(--color-text-muted);
+}
+
+.analytics-table__speech--muted {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+@media (max-width: 560px) {
+  .analytics-table__row {
+    grid-template-columns: 24px 1fr;
+    row-gap: 2px;
+  }
+
+  .analytics-table__duration,
+  .analytics-table__speech {
+    grid-column: 2 / -1;
+  }
+}

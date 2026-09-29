@@ -30,12 +30,13 @@ export async function startInterviewSession(id) {
   return response.data.data;
 }
 
-export async function submitAnswer(id, { questionId, answerText, durationSeconds, transcript }) {
+export async function submitAnswer(id, { questionId, answerText, durationSeconds, transcript, speechWords }) {
   const response = await api.post(`/interviews/${id}/answers`, {
     questionId,
     answerText,
     durationSeconds,
     transcript,
+    speechWords,
   });
   return response.data.data;
 }
@@ -63,5 +64,10 @@ export async function fetchInterviewReport(id) {
 
 export async function generateInterviewReport(id) {
   const response = await api.post(`/interviews/${id}/report`, {}, { timeout: 45000 });
+  return response.data.data;
+}
+
+export async function fetchInterviewAnalytics(id) {
+  const response = await api.get(`/interviews/${id}/analytics`);
   return response.data.data;
 }

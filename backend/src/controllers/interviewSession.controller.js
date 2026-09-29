@@ -10,6 +10,7 @@ import {
 } from '../services/interviewSession.service.js';
 import { transcribeAudioBuffer } from '../services/speech/deepgram.service.js';
 import { evaluateAnswer } from '../services/ai/answerEvaluation.service.js';
+import { computeSpeakingMetrics } from '../services/speakingMetrics.service.js';
 import { query } from '../config/db.js';
 
 const MAX_FOLLOW_UPS_PER_INTERVIEW = 2;
@@ -99,7 +100,7 @@ export async function startInterview(req, res) {
 
 export async function submitAnswer(req, res) {
   const id = parseInterviewId(req.params.id);
-  const { questionId, answerText, durationSeconds, transcript } = req.body;
+  const { questionId, answerText, durationSeconds, transcript, speechWords } = req.body;
 
   const interview = await getInterviewForSession(id, req.user.id);
   if (!interview) {
@@ -144,6 +145,12 @@ export async function submitAnswer(req, res) {
       ? { text: evaluation.followUpQuestion, category: question.category }
       : null;
 
+  // Speaking metrics are computed only from real word timestamps the client
+  // sent along — never estimated from duration alone.
+  const speakingMetrics = speechWords
+    ? computeSpeakingMetrics({ transcript: transcript || answerText, words: speechWords })
+    : null;
+
   try {
     await submitAnswerAndAdvance({
       interviewId: id,
@@ -157,6 +164,7 @@ export async function submitAnswer(req, res) {
       feedback: evaluation?.feedback,
       betterAnswer: evaluation?.betterAnswer,
       followUp: followUpToInsert,
+      speakingMetrics,
     });
   } catch (error) {
     if (error.code === '23505') {
@@ -186,7 +194,7 @@ export async function transcribeAudio(req, res) {
     throw new AppError('Interview not found.', 404);
   }
 
-  const { transcript, confidence } = await transcribeAudioBuffer(req.file.buffer, req.file.mimetype);
+  const { transcript, confidence, words } = await transcribeAudioBuffer(req.file.buffer, req.file.mimetype);
 
   if (!transcript) {
     throw new AppError(
@@ -195,7 +203,7 @@ export async function transcribeAudio(req, res) {
     );
   }
 
-  res.status(200).json({ success: true, data: { transcript, confidence } });
+  res.status(200).json({ success: true, data: { transcript, confidence, words } });
 }
 
 export async function getFeedback(req, res) {

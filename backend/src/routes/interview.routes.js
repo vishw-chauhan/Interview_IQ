@@ -19,6 +19,7 @@ import {
   getFeedback,
 } from '../controllers/interviewSession.controller.js';
 import { getReport, generateReport } from '../controllers/report.controller.js';
+import { getAnalytics } from '../controllers/analytics.controller.js';
 
 const router = Router();
 
@@ -37,5 +38,7 @@ router.get('/:id/feedback', asyncHandler(getFeedback));
 
 router.get('/:id/report', asyncHandler(getReport));
 router.post('/:id/report', asyncHandler(generateReport));
+
+router.get('/:id/analytics', asyncHandler(getAnalytics));
 
 export default router;

@@ -11,6 +11,7 @@ import {
   PlayCircle,
   MessageSquareText,
   BarChart3,
+  Mic,
 } from 'lucide-react';
 import Button from '../components/Button.jsx';
 import Skeleton from '../components/Skeleton.jsx';
@@ -209,6 +210,14 @@ export default function InterviewDetail() {
                 <Button variant="secondary">
                   <MessageSquareText size={16} aria-hidden="true" />
                   View feedback
+                </Button>
+              </Link>
+            )}
+            {hasAnyProgress && (
+              <Link to={`/interviews/${id}/analytics`}>
+                <Button variant="secondary">
+                  <Mic size={16} aria-hidden="true" />
+                  View analytics
                 </Button>
               </Link>
             )}
