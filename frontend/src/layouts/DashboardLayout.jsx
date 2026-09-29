@@ -19,8 +19,8 @@ const navItems = [
   { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard, available: true },
   { label: 'Resume Analysis', to: '/resumes', icon: FileText, available: true },
   { label: 'AI Interview', to: '/interviews/new', icon: Video, available: true },
+  { label: 'Skill Analysis', to: '/skills', icon: Target, available: true },
   { label: 'Performance Report', icon: BarChart3, available: false, phase: 'Phase 15' },
-  { label: 'Skill Analysis', icon: Target, available: false, phase: 'Phase 17' },
   { label: 'Interview History', icon: History, available: false, phase: 'Phase 18' },
 ];
 

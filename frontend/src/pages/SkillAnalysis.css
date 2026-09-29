@@ -1,0 +1,187 @@
+.skill-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 780px;
+}
+
+.skill-analysis__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.skill-analysis__header h1 {
+  font-size: 1.375rem;
+}
+
+.skill-analysis__subtitle {
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+}
+
+.skill-analysis__section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 1rem;
+  margin-bottom: var(--space-3);
+}
+
+/* Skill bars */
+.skill-bar-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.skill-bar__header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: var(--space-1);
+  text-transform: capitalize;
+}
+
+.skill-bar__value--good {
+  color: var(--color-success);
+}
+
+.skill-bar__value--mid {
+  color: #b7791f;
+}
+
+.skill-bar__value--low {
+  color: var(--color-danger);
+}
+
+.skill-bar__track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-bg);
+  overflow: hidden;
+}
+
+.skill-bar__fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 400ms ease;
+}
+
+.skill-bar__fill--good {
+  background: var(--color-success);
+}
+
+.skill-bar__fill--mid {
+  background: #b7791f;
+}
+
+.skill-bar__fill--low {
+  background: var(--color-danger);
+}
+
+/* Notices */
+.skill-analysis__weak,
+.skill-analysis__resume-gaps {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: 0.875rem;
+}
+
+.skill-analysis__weak {
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  border-color: transparent;
+}
+
+.skill-analysis__resume-gaps {
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  border-color: transparent;
+}
+
+.skill-analysis__overview {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+/* Roadmap */
+.roadmap-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.roadmap-item {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.roadmap-item__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.roadmap-item__skill {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  text-transform: capitalize;
+}
+
+.roadmap-item__priority {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.roadmap-item__priority--danger {
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+}
+
+.roadmap-item__priority--mid {
+  color: #b7791f;
+  background: #fdf3e2;
+}
+
+.roadmap-item__priority--good {
+  color: var(--color-success);
+  background: var(--color-success-soft);
+}
+
+.roadmap-item__why {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.roadmap-item__recommendation {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 560px) {
+  .skill-analysis__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .roadmap-item__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+}
