@@ -2,12 +2,17 @@ import { AppError } from '../utils/AppError.js';
 import {
   getInterviewForSession,
   countQuestionsForInterview,
+  countFollowUpsForInterview,
   startInterviewSession,
   findQuestionForInterview,
   submitAnswerAndAdvance,
+  getFeedbackItems,
 } from '../services/interviewSession.service.js';
 import { transcribeAudioBuffer } from '../services/speech/deepgram.service.js';
+import { evaluateAnswer } from '../services/ai/answerEvaluation.service.js';
 import { query } from '../config/db.js';
+
+const MAX_FOLLOW_UPS_PER_INTERVIEW = 2;
 
 function parseInterviewId(rawId) {
   const id = Number(rawId);
@@ -24,7 +29,7 @@ async function buildSessionPayload(interviewId, userId) {
   }
 
   const questionsResult = await query(
-    'SELECT id, order_index, text, category FROM questions WHERE interview_id = $1 ORDER BY order_index ASC',
+    'SELECT id, order_index, text, category, is_follow_up FROM questions WHERE interview_id = $1 ORDER BY order_index ASC',
     [interviewId]
   );
   const questions = questionsResult.rows;
@@ -38,7 +43,13 @@ async function buildSessionPayload(interviewId, userId) {
   if (interview.status === 'in_progress') {
     const match = questions.find((q) => q.order_index === interview.current_question_index);
     if (match) {
-      currentQuestion = { id: match.id, orderIndex: match.order_index, text: match.text, category: match.category };
+      currentQuestion = {
+        id: match.id,
+        orderIndex: match.order_index,
+        text: match.text,
+        category: match.category,
+        isFollowUp: match.is_follow_up,
+      };
     }
   }
 
@@ -106,16 +117,46 @@ export async function submitAnswer(req, res) {
     throw new AppError('Please answer the current question before moving on.', 409);
   }
 
-  const totalQuestions = await countQuestionsForInterview(id);
+  let allowFollowUp = false;
+  if (!question.is_follow_up && interview.mode !== 'quick') {
+    const existingFollowUps = await countFollowUpsForInterview(id);
+    allowFollowUp = existingFollowUps < MAX_FOLLOW_UPS_PER_INTERVIEW;
+  }
+
+  let evaluation = null;
+  let evaluationError = null;
+  try {
+    evaluation = await evaluateAnswer({
+      roleName: interview.role_name,
+      difficulty: interview.difficulty,
+      category: question.category,
+      questionText: question.text,
+      answerText,
+      allowFollowUp,
+    });
+  } catch (error) {
+    console.error('Answer evaluation failed:', error.message);
+    evaluationError = 'Could not evaluate this answer automatically. Your answer has been saved.';
+  }
+
+  const followUpToInsert =
+    allowFollowUp && evaluation?.needsFollowUp && evaluation.followUpQuestion
+      ? { text: evaluation.followUpQuestion, category: question.category }
+      : null;
 
   try {
     await submitAnswerAndAdvance({
       interviewId: id,
       questionId,
+      questionOrderIndex: question.order_index,
       answerText,
       durationSeconds,
       transcript,
-      totalQuestions,
+      technicalScore: evaluation?.technicalScore,
+      communicationScore: evaluation?.communicationScore,
+      feedback: evaluation?.feedback,
+      betterAnswer: evaluation?.betterAnswer,
+      followUp: followUpToInsert,
     });
   } catch (error) {
     if (error.code === '23505') {
@@ -125,7 +166,16 @@ export async function submitAnswer(req, res) {
   }
 
   const payload = await buildSessionPayload(id, req.user.id);
-  res.status(200).json({ success: true, data: payload });
+  res.status(200).json({
+    success: true,
+    data: {
+      ...payload,
+      lastEvaluation: evaluation,
+      evaluationError,
+      followUpAdded: Boolean(followUpToInsert),
+      followUpReason: followUpToInsert ? evaluation.followUpReason : null,
+    },
+  });
 }
 
 export async function transcribeAudio(req, res) {
@@ -146,4 +196,52 @@ export async function transcribeAudio(req, res) {
   }
 
   res.status(200).json({ success: true, data: { transcript, confidence } });
+}
+
+export async function getFeedback(req, res) {
+  const id = parseInterviewId(req.params.id);
+
+  const interview = await getInterviewForSession(id, req.user.id);
+  if (!interview) {
+    throw new AppError('Interview not found.', 404);
+  }
+
+  const rows = await getFeedbackItems(id);
+
+  const items = rows.map((row) => ({
+    question: {
+      id: row.question_id,
+      orderIndex: row.order_index,
+      text: row.question_text,
+      category: row.category,
+      isFollowUp: row.is_follow_up,
+    },
+    answer: row.answer_id
+      ? {
+          id: row.answer_id,
+          text: row.answer_text,
+          durationSeconds: row.duration_seconds,
+          technicalScore: row.technical_score,
+          communicationScore: row.communication_score,
+          feedback: row.feedback,
+          betterAnswer: row.better_answer,
+          answeredAt: row.answered_at,
+          wasEvaluated: row.technical_score !== null,
+        }
+      : null,
+  }));
+
+  res.status(200).json({
+    success: true,
+    data: {
+      interview: {
+        id: interview.id,
+        roleName: interview.role_name,
+        difficulty: interview.difficulty,
+        mode: interview.mode,
+        status: interview.status,
+      },
+      items,
+    },
+  });
 }

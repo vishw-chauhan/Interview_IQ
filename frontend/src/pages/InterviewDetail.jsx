@@ -1,6 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Video, FileText, Gauge, Clock, Sparkles, ListChecks, PlayCircle } from 'lucide-react';
+import {
+  ArrowLeft,
+  Video,
+  FileText,
+  Gauge,
+  Clock,
+  Sparkles,
+  ListChecks,
+  PlayCircle,
+  MessageSquareText,
+  BarChart3,
+} from 'lucide-react';
 import Button from '../components/Button.jsx';
 import Skeleton from '../components/Skeleton.jsx';
 import EmptyState from '../components/EmptyState.jsx';
@@ -126,6 +137,8 @@ export default function InterviewDetail() {
   const hasQuestions = questions.length > 0;
   const canGenerate = interview.status === 'created';
   const sessionStatus = STATUS_LABELS[interview.status] || STATUS_LABELS.created;
+  const hasAnyProgress = interview.status === 'in_progress' || interview.status === 'completed';
+  const isCompleted = interview.status === 'completed';
 
   return (
     <div className="interview-detail">
@@ -182,14 +195,32 @@ export default function InterviewDetail() {
               {interview.status === 'completed' && 'This session is complete.'}
             </p>
           </div>
-          <Link to={`/interviews/${id}/session`}>
-            <Button>
-              <PlayCircle size={16} aria-hidden="true" />
-              {interview.status === 'created' && 'Start interview'}
-              {interview.status === 'in_progress' && 'Resume session'}
-              {interview.status === 'completed' && 'View summary'}
-            </Button>
-          </Link>
+          <div className="interview-detail__session-actions">
+            <Link to={`/interviews/${id}/session`}>
+              <Button>
+                <PlayCircle size={16} aria-hidden="true" />
+                {interview.status === 'created' && 'Start interview'}
+                {interview.status === 'in_progress' && 'Resume session'}
+                {interview.status === 'completed' && 'View summary'}
+              </Button>
+            </Link>
+            {hasAnyProgress && (
+              <Link to={`/interviews/${id}/feedback`}>
+                <Button variant="secondary">
+                  <MessageSquareText size={16} aria-hidden="true" />
+                  View feedback
+                </Button>
+              </Link>
+            )}
+            {isCompleted && (
+              <Link to={`/interviews/${id}/report`}>
+                <Button variant="secondary">
+                  <BarChart3 size={16} aria-hidden="true" />
+                  View report
+                </Button>
+              </Link>
+            )}
+          </div>
         </div>
       )}
 

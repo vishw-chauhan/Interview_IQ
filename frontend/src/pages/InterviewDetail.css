@@ -213,3 +213,10 @@
   color: var(--color-text-muted);
   font-style: italic;
 }
+
+
+.interview-detail__session-actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}

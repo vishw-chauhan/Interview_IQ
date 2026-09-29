@@ -16,7 +16,9 @@ import {
   startInterview,
   submitAnswer,
   transcribeAudio,
+  getFeedback,
 } from '../controllers/interviewSession.controller.js';
+import { getReport, generateReport } from '../controllers/report.controller.js';
 
 const router = Router();
 
@@ -31,5 +33,9 @@ router.get('/:id/session', asyncHandler(getSession));
 router.post('/:id/start', asyncHandler(startInterview));
 router.post('/:id/answers', validate(submitAnswerSchema), asyncHandler(submitAnswer));
 router.post('/:id/transcribe', handleAudioUpload, asyncHandler(transcribeAudio));
+router.get('/:id/feedback', asyncHandler(getFeedback));
+
+router.get('/:id/report', asyncHandler(getReport));
+router.post('/:id/report', asyncHandler(generateReport));
 
 export default router;

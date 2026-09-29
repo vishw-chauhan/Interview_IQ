@@ -50,3 +50,18 @@ export async function transcribeAudio(id, audioBlob) {
   });
   return response.data.data;
 }
+
+export async function fetchInterviewFeedback(id) {
+  const response = await api.get(`/interviews/${id}/feedback`);
+  return response.data.data;
+}
+
+export async function fetchInterviewReport(id) {
+  const response = await api.get(`/interviews/${id}/report`);
+  return response.data.data;
+}
+
+export async function generateInterviewReport(id) {
+  const response = await api.post(`/interviews/${id}/report`, {}, { timeout: 45000 });
+  return response.data.data;
+}
