@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard.jsx';
 import Resumes from './pages/Resumes.jsx';
 import ResumeDetail from './pages/ResumeDetail.jsx';
 import NewInterview from './pages/NewInterview.jsx';
+import InterviewHistory from './pages/InterviewHistory.jsx';
 import InterviewDetail from './pages/InterviewDetail.jsx';
 import InterviewSession from './pages/InterviewSession.jsx';
 import InterviewFeedback from './pages/InterviewFeedback.jsx';
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/resumes" element={<Resumes />} />
         <Route path="/resumes/:id" element={<ResumeDetail />} />
         <Route path="/interviews/new" element={<NewInterview />} />
+        <Route path="/interviews/history" element={<InterviewHistory />} />
         <Route path="/interviews/:id" element={<InterviewDetail />} />
         <Route path="/interviews/:id/session" element={<InterviewSession />} />
         <Route path="/interviews/:id/feedback" element={<InterviewFeedback />} />

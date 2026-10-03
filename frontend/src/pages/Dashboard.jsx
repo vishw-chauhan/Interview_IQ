@@ -20,28 +20,32 @@ const features = [
     available: true,
   },
   {
-    title: 'Performance Report',
-    description: 'See your scores across technical, communication and problem solving.',
-    icon: BarChart3,
-    phase: 'Phase 15',
-  },
-  {
-    title: 'Answer Improvement',
-    description: 'Compare your answers with stronger, suggested versions.',
-    icon: MessageSquareText,
-    phase: 'Phase 14',
-  },
-  {
     title: 'Skill Analysis',
-    description: 'Identify skill gaps and get a personalized learning roadmap.',
+    description: 'See a skill profile and a personalized learning roadmap from your interviews.',
     icon: Target,
-    phase: 'Phase 17',
+    to: '/skills',
+    available: true,
   },
   {
     title: 'Interview History',
-    description: 'Track your past interviews and your progress over time.',
+    description: 'Browse every past interview and see your progress over time.',
     icon: History,
-    phase: 'Phase 18',
+    to: '/interviews/history',
+    available: true,
+  },
+  {
+    title: 'Performance Report',
+    description: 'Per-interview scores across technical, communication and more — open from any interview.',
+    icon: BarChart3,
+    available: true,
+    note: true,
+  },
+  {
+    title: 'Answer Improvement',
+    description: 'Per-answer feedback and stronger example answers — open from any interview.',
+    icon: MessageSquareText,
+    available: true,
+    note: true,
   },
 ];
 
@@ -90,23 +94,21 @@ export default function Dashboard() {
           {features.map((feature) => {
             const Icon = feature.icon;
             const card = (
-              <div className={`card feature-card ${feature.available ? 'feature-card--available' : ''}`}>
+              <div className="card feature-card feature-card--available">
                 <div className="feature-card__icon">
                   <Icon size={20} aria-hidden="true" />
                 </div>
                 <h3>{feature.title}</h3>
                 <p>{feature.description}</p>
                 <div className="feature-card__footer">
-                  {feature.available ? (
-                    <span className="feature-card__badge feature-card__badge--available">Available</span>
-                  ) : (
-                    <span className="feature-card__badge">Coming in {feature.phase}</span>
-                  )}
+                  <span className="feature-card__badge feature-card__badge--available">
+                    {feature.note ? 'Open from an interview' : 'Available'}
+                  </span>
                 </div>
               </div>
             );
 
-            return feature.available ? (
+            return feature.to ? (
               <Link key={feature.title} to={feature.to} className="feature-card__link">
                 {card}
               </Link>

@@ -20,6 +20,7 @@ import {
 } from '../controllers/interviewSession.controller.js';
 import { getReport, generateReport } from '../controllers/report.controller.js';
 import { getAnalytics } from '../controllers/analytics.controller.js';
+import { getHistory } from '../controllers/history.controller.js';
 
 const router = Router();
 
@@ -27,6 +28,10 @@ router.use(requireAuth);
 
 router.post('/', validate(createInterviewSchema), asyncHandler(createInterviewHandler));
 router.get('/', asyncHandler(listInterviews));
+
+// Must come before GET /:id, otherwise Express treats "history" as an id.
+router.get('/history', asyncHandler(getHistory));
+
 router.get('/:id', asyncHandler(getInterview));
 router.post('/:id/questions', asyncHandler(generateQuestions));
 

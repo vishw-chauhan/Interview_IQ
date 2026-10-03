@@ -4,7 +4,6 @@ import {
   LayoutDashboard,
   FileText,
   Video,
-  BarChart3,
   Target,
   History,
   Menu,
@@ -20,8 +19,7 @@ const navItems = [
   { label: 'Resume Analysis', to: '/resumes', icon: FileText, available: true },
   { label: 'AI Interview', to: '/interviews/new', icon: Video, available: true },
   { label: 'Skill Analysis', to: '/skills', icon: Target, available: true },
-  { label: 'Performance Report', icon: BarChart3, available: false, phase: 'Phase 15' },
-  { label: 'Interview History', icon: History, available: false, phase: 'Phase 18' },
+  { label: 'Interview History', to: '/interviews/history', icon: History, available: true },
 ];
 
 function getInitials(name) {
